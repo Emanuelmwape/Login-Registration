@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+            color: #f1f5f9;
+            padding: 20px;
+            text-align: right;
+            font-size: 2rem;
+            font-weight: 600;
+            border-bottom: 3px solid #16a34a;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f0fdf4;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .user-photo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(145deg, #ffffff, #e5e7eb);
+            border-radius: 50%;
+            margin-right: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #16a34a;
+        }
+
+        .user-photo.dragover {
+            background: #16a34a;
+            border: 2px dashed #ffffff;
+        }
+
+        .user-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-photo input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .status {
+            font-size: 1rem;
+            color: #16a34a;
+            font-weight: 600;
+            flex-grow: 1;
+            padding: 8px 12px;
+            background: #f0fdf4;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .notification-count {
+            font-size: 1rem;
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .notification-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .notification-card {
+            background: #f0fdf4;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-card p {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            color: #16a34a;
+            font-weight: 500;
+        }
+
+        .notification-card .date {
+            font-size: 0.85rem;
+            color: #475569;
+            text-align: right;
+        }
+
+        .action-buttons {
+            padding: 20px;
+            background: #f0fdf4;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .action-buttons button {
+            padding: 10px 20px;
+            background: #16a34a;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-buttons button:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(22, 163, 74, 0.4);
+        }
+
+        .action-buttons button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .action-buttons button:hover::after {
+            width: 150px;
+            height: 150px;
+        }
+
+        .nav-link {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            color: #16a34a;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #15803d;
+            text-decoration: underline;
+        }
+
+        .timestamp {
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #475569;
+            font-style: italic;
+            background: #f0fdf4;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notifications</h1>
+        <div class="top-bar">
+            <div class="user-photo" id="user-photo">
+                <span id="photo-placeholder">Add Photo</span>
+                <img id="user-photo-img" src="" alt="User Photo" style="display: none;">
+                <input type="file" id="photo-upload" accept="image/*" onchange="previewImage(event)">
+            </div>
+            <div class="status">Notifications Status: Active</div>
+            <div class="notification-count" id="notification-count">Notifications: 0</div>
+        </div>
+        <div class="notification-grid" id="notification-grid"></div>
+        <div class="action-buttons">
+            <button onclick="clearNotifications()">Clear All</button>
+            <button onclick="markAllRead()">Mark All Read</button>
+        </div>
+        <a href="dashboard.html" class="nav-link">← Back to Home</a>
+            </div>
+
+    <script>
+        // Load notifications from localStorage
+        function loadNotifications() {
+            const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+            const grid = document.getElementById('notification-grid');
+            const countElement = document.getElementById('notification-count');
+            grid.innerHTML = '';
+            storedNotifications.forEach(notification => {
+                const card = document.createElement('div');
+                card.className = 'notification-card';
+                card.innerHTML = `<p>${notification}</p><div class="date">${getCurrentDateTime()}</div>`;
+                grid.appendChild(card);
+            });
+            countElement.textContent = `Notifications: ${storedNotifications.length}`;
+            updateDashboardCount();
+        }
+
+        // Update dashboard count via localStorage
+        function updateDashboardCount() {
+            const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+            localStorage.setItem('notificationCount', notifications.length);
+        }
+
+        // Clear all notifications
+        function clearNotifications() {
+            localStorage.removeItem('notifications');
+            localStorage.setItem('notificationCount', 0);
+            loadNotifications();
+        }
+
+        // Mark all as read (placeholder functionality)
+        function markAllRead() {
+            alert('All notifications marked as read!');
+        }
+
+        // Get current date and time
+        function getCurrentDateTime() {
+            const now = new Date();
+            return now.toLocaleString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true, 
+                timeZoneName: 'short',
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric'
+            });
+        }
+
+        // Preview and persist uploaded profile picture
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const userPhotoImg = document.getElementById('user-photo-img');
+                    const photoPlaceholder = document.getElementById('photo-placeholder');
+                    userPhotoImg.src = e.target.result;
+                    userPhotoImg.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                    localStorage.setItem('userPhoto', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Handle drag and drop for user photo
+        const userPhoto = document.getElementById('user-photo');
+        const userPhotoImg = document.getElementById('user-photo-img');
+        const photoPlaceholder = document.getElementById('photo-placeholder');
+
+        userPhoto.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            userPhoto.classList.add('dragover');
+        });
+
+        userPhoto.addEventListener('dragleave', () => {
+            userPhoto.classList.remove('dragover');
+        });
+
+        userPhoto.addEventListener('drop', (e) => {
+            e.preventDefault();
+            userPhoto.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    userPhotoImg.src = event.target.result;
+                    userPhotoImg.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                    localStorage.setItem('userPhoto', event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Load persisted user photo on page load
+        window.onload = function () {
+            if (!localStorage.getItem('loggedInUser')) {
+                alert('No user logged in. Redirecting to login page.');
+                window.location.href = 'VantageFinance.html';
+            }
+            const savedPhoto = localStorage.getItem('userPhoto');
+            if (savedPhoto) {
+                userPhotoImg.src = savedPhoto;
+                userPhotoImg.style.display = 'block';
+                photoPlaceholder.style.display = 'none';
+            }
+            loadNotifications();
+        };
+    </script>
+</body>
+</html>

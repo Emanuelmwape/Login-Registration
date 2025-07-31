@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glass Login & Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body::before {
+      content: "";
+      background-image: url('https://i.imgur.com/WXTHdlL.jpg');
+      background-size: cover;
+      background-position: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      filter: brightness(0.7);
+    }
+
+    .glass {
+      backdrop-filter: blur(20px);
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .form-input {
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3);
+    }
+
+    button {
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4">
+
+  <div class="glass w-full max-w-sm rounded-2xl shadow-2xl p-5 text-white">
+    <!-- Register Form -->
+    <div id="register-form">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-4">Sign Up</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs mb-1">Full Name</label>
+          <input type="text" id="reg-fullname" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Full Name" required>
+        </div>
+        <div>
+          <label class="block text-xs mb-1">Email</label>
+          <input type="email" id="reg-email" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Email" required>
+        </div>
+        <div>
+          <label class="block text-xs mb-1">Username</label>
+          <input type="text" id="reg-username" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Username" required>
+        </div>
+        <div>
+          <label class="block text-xs mb-1">Password</label>
+          <input type="password" id="reg-password" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Password" required>
+        </div>
+        <div>
+          <label class="block text-xs mb-1">Confirm Password</label>
+          <input type="password" id="reg-confirm-password" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Confirm Password" required>
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" id="terms" class="mr-1 h-3 w-3 text-pink-500" required>
+          <label for="terms" class="text-xs">I agree to terms</label>
+        </div>
+        <button onclick="register()" class="w-full py-1.5 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold rounded-lg">Create Account</button>
+      </div>
+      <p class="mt-3 text-center text-xs">
+        Already have an account? <span class="underline hover:text-pink-300 cursor-pointer" onclick="showLogin()">Log in</span>
+      </p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form" class="hidden">
+      <h2 class="text-xl md:text-2xl font-bold text-center mb-4">Log In</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs mb-1">Username</label>
+          <input type="text" id="login-username" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Username" required>
+        </div>
+        <div>
+          <label class="block text-xs mb-1">Password</label>
+          <input type="password" id="login-password" class="form-input w-full px-3 py-1 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-pink-300" placeholder="Password" required>
+        </div>
+        <button onclick="login()" class="w-full py-1.5 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold rounded-lg">Log In</button>
+      </div>
+      <p class="mt-3 text-center text-xs">
+        No account? <span class="underline hover:text-pink-300 cursor-pointer" onclick="showRegister()">Sign up</span>
+      </p>
+    </div>
+
+    <!-- Welcome -->
+    <div id="welcome" class="hidden text-center">
+      <h2 class="text-xl md:text-2xl font-bold mb-4">Welcome, <span id="username-display"></span>!</h2>
+      <button onclick="logout()" class="w-full py-1.5 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold rounded-lg">Log Out</button>
+    </div>
+  </div>
+
+  <script>
+    function register() {
+      const fullname = document.getElementById('reg-fullname').value;
+      const email = document.getElementById('reg-email').value;
+      const username = document.getElementById('reg-username').value;
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+      const terms = document.getElementById('terms').checked;
+
+      if (!fullname || !email || !username || !password || !confirmPassword || !terms) {
+        alert('Please fill in all fields and agree to the terms.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+
+
+      const userData = { fullName: fullname, email: email, password: password };
+      localStorage.setItem(username, JSON.stringify(userData));
+      alert('Registration successful! Please log in.');
+      showLogin();
+    }
+
+    function login() {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      const stored = localStorage.getItem(username);
+
+      if (stored) {
+        const userData = JSON.parse(stored);
+        if (userData.password === password) {
+          localStorage.setItem('loggedInUser', username);
+          localStorage.setItem('lastLoginTime', new Date().toLocaleString());
+          window.location.href = 'dashboard.html'; // Optional redirect
+        } else {
+          alert('Incorrect password.');
+        }
+      } else {
+        alert('Invalid credentials.');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('lastLoginTime');
+      window.location.href = 'VantageFinance.html'; // Replace with your homepage
+    }
+
+    function showLogin() {
+      document.getElementById('register-form').classList.add('hidden');
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('welcome').classList.add('hidden');
+    }
+
+    function showRegister() {
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('register-form').classList.remove('hidden');
+      document.getElementById('welcome').classList.add('hidden');
+    }
+
+    window.onload = function () {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        const userData = JSON.parse(localStorage.getItem(loggedInUser));
+        document.getElementById('username-display').textContent = userData.fullName || loggedInUser;
+        document.getElementById('register-form').classList.add('hidden');
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('welcome').classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #ffffff;
+    }
+    .profile-pic {
+      position: relative;
+      width: 5rem;
+      height: 5rem;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #e5e7eb;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+      border: 2px solid #16a34a;
+    }
+    .profile-pic:hover {
+      transform: scale(1.05);
+    }
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .profile-pic input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .form-container {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .form-container:hover {
+      transform: translateY(-2px);
+    }
+    input, select {
+      transition: all 0.2s ease;
+    }
+    input:focus, select:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+    }
+    button {
+      background: hsl(0, 0%, 99%);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    button:hover {
+      background: hsl(120, 14%, 99%);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+    }
+    button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s ease, height 0.2s ease;
+    }
+    button:hover::after {
+      width: 100px;
+      height: 100px;
+    }
+    .success-message {
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 font-sans">
+  <div class="form-container p-4 w-full max-w-xs">
+    <h1 class="text-xl font-bold text-center text-green-600 mb-4">My Account</h1>
+    <div id="success-message" class="hidden text-center text-green-600 font-medium mb-4 bg-green-50 p-2 rounded success-message">
+      Profile updated!
+    </div>
+    <div class="profile-pic mx-auto mb-4" id="avatar-container">
+      <span class="text-2xl" id="avatar-placeholder">👤</span>
+      <img id="avatar-img" src="" alt="Profile Picture" style="display: none;" />
+      <input type="file" accept="image/*" id="avatar-upload" />
+    </div>
+    <form id="profile-form" class="space-y-3">
+      <div>
+        <label for="full-name" class="block text-xs font-medium text-gray-800 mb-1">Full Name</label>
+        <input type="text" id="full-name" name="full-name" placeholder="Emmanuel" required
+               class="w-full px-2 py-1.5 border border-gray-200 rounded focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-none bg-white" />
+        <div id="name-error" class="hidden text-red-500 text-xs mt-1">Enter full name</div>
+      </div>
+      <div>
+        <label for="gender" class="block text-xs font-medium text-gray-800 mb-1">Sex</label>
+        <select id="gender" name="gender" required
+                class="w-full px-2 py-1.5 border border-gray-200 rounded focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-none bg-white">
+          <option value="" disabled selected>Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+        <div id="gender-error" class="hidden text-red-500 text-xs mt-1">Select gender</div>
+      </div>
+      <div>
+        <label for="email" class="block text-xs font-medium text-gray-800 mb-1">Email</label>
+        <input type="email" id="email" name="email" placeholder="mwapeemmanuel01@gmail.com" required
+               class="w-full px-2 py-1.5 border border-gray-200 rounded focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-none bg-white" />
+        <div id="email-error" class="hidden text-red-500 text-xs mt-1">Enter valid email</div>
+      </div>
+      <div>
+        <label for="role" class="block text-xs font-medium text-gray-800 mb-1">Role</label>
+        <input type="text" id="role" name="role" placeholder="Customer Relationship Officer" required
+               class="w-full px-2 py-1.5 border border-gray-200 rounded focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-none bg-white" />
+        <div id="role-error" class="hidden text-red-500 text-xs mt-1">Enter role</div>
+      </div>
+      <button type="submit"
+              class="w-full py-2 text-green-600 font-medium text-sm rounded">
+        Save
+      </button>
+    </form>
+    <a href="dashboard.html" class="block text-center mt-3 text-green-600 text-xs font-medium hover:underline">
+      ← Back to Home
+    </a>
+  </div>
+
+  <script>
+    const input = document.getElementById('avatar-upload');
+    const container = document.getElementById('avatar-container');
+    const avatarImg = document.getElementById('avatar-img');
+    const avatarPlaceholder = document.getElementById('avatar-placeholder');
+    const form = document.getElementById('profile-form');
+    const successMessage = document.getElementById('success-message');
+
+    // Load persisted user photo and form data
+    window.onload = function() {
+      const savedPhoto = localStorage.getItem('userPhoto');
+      if (savedPhoto) {
+        avatarImg.src = savedPhoto;
+        avatarImg.style.display = 'block';
+        avatarPlaceholder.style.display = 'none';
+      }
+      const accountData = JSON.parse(localStorage.getItem('accountDetails')) || {};
+      document.getElementById('full-name').value = accountData.fullName || '';
+      document.getElementById('gender').value = accountData.gender || '';
+      document.getElementById('email').value = accountData.email || '';
+      document.getElementById('role').value = accountData.role || '';
+    };
+
+    input.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          avatarImg.src = e.target.result;
+          avatarImg.style.display = 'block';
+          avatarPlaceholder.style.display = 'none';
+          localStorage.setItem('userPhoto', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Reset error messages
+      document.querySelectorAll('.error-message').forEach(error => error.style.display = 'none');
+      
+      // Validate inputs
+      let isValid = true;
+      const fullName = document.getElementById('full-name').value.trim();
+      const gender = document.getElementById('gender').value;
+      const email = document.getElementById('email').value.trim();
+      const role = document.getElementById('role').value.trim();
+      
+      if (!fullName) {
+        document.getElementById('name-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!gender) {
+        document.getElementById('gender-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('email-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!role) {
+        document.getElementById('role-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (isValid) {
+        const accountData = { fullName, gender, email, role };
+        localStorage.setItem('accountDetails', JSON.stringify(accountData));
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+          window.location.href = 'dashboard.html';
+        }, 800);
+      }
+    });
+  </script>
+</body>
+</html>

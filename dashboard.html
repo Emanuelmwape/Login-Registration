@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #1e293b;
+            line-height: 1.4;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: #e2e8f0;
+            padding: 15px 10px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            transition: width 0.3s ease;
+        }
+
+        .sidebar h2 {
+            margin: 0 0 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: left;
+            color: #f1f5f9;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            text-decoration: none;
+            margin: 8px 0;
+            padding: 8px 6px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #475569;
+            color: #ffffff;
+            padding-left: 15px;
+            transform: translateX(4px);
+        }
+
+        .content-area {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 15px;
+            align-items: stretch;
+        }
+
+        .main {
+            flex: 2;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #16a34a;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .panel:hover {
+            transform: translateY(-4px);
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(22, 163, 74, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .panel h3 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .profile-info {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #e5e7eb);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px solid #16a34a;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-pic input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .quick-actions button {
+            padding: 10px 20px;
+            background: #16a34a;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(22, 163, 74, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-actions button:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.4);
+        }
+
+        .quick-actions button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .quick-actions button:hover::after {
+            width: 150px;
+            height: 150px;
+        }
+
+        .overview {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #16a34a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview:hover {
+            transform: translateY(-4px);
+        }
+
+        .overview::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(22, 163, 74, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .overview h3 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .overview p {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin: 8px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .overview p em {
+            color: #16a34a;
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        #overview-reminder-list {
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #overview-reminder-list .reminder-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #16a34a;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.02);
+            transition: 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        #overview-reminder-list .reminder-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 7px rgba(0,0,0,0.04);
+        }
+
+        .checkbox {
+            margin-top: 2px;
+            transform: scale(1.1);
+        }
+
+        .reminder-details {
+            flex-grow: 1;
+        }
+
+        .reminder-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .reminder-time {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 600px) {
+            #overview-reminder-list .reminder-card {
+                flex-direction: column;
+            }
+
+            .checkbox {
+                align-self: flex-start;
+            }
+
+            .delete-btn {
+                align-self: flex-end;
+            }
+        }
+
+        #overview-reminder-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #overview-reminder-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 2px;
+        }
+
+        #overview-reminder-list::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 2px;
+        }
+
+        #overview-reminder-list::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+
+        .calendar-panel {
+            width: 280px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-panel:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .calendar-panel h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .calendar-panel #current-month-year {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #475569;
+        }
+
+        .calendar-panel table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .calendar-panel th,
+        .calendar-panel td {
+            padding: 4px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .calendar-panel th {
+            background: #16a34a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .calendar-panel .today {
+            background: #16a34a;
+            color: #ffffff;
+            font-weight: 700;
+            border-radius: 50%;
+            transform: scale(1.1);
+            box-shadow: 0 2px 5px rgba(22, 163, 74, 0.3);
+        }
+
+        .calendar-panel .has-reminder {
+            background: #f0fdf4;
+            position: relative;
+        }
+
+        .calendar-panel .has-reminder::after {
+            content: '📅';
+            color: #10b981;
+            font-size: 1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .calendar-panel .reminder-tooltip {
+            visibility: hidden;
+            position: absolute;
+            background: #ffffff;
+            color: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #10b981;
+        }
+
+        .calendar-panel td:hover .reminder-tooltip {
+            visibility: visible;
+        }
+
+        .calendar-panel .announcement-section {
+            margin-top: 15px;
+            flex-shrink: 0;
+        }
+
+        .calendar-panel .announcement-section h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .calendar-panel textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 8px;
+            font-size: 0.9rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            resize: vertical;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .calendar-panel button {
+            padding: 8px 16px;
+            background: #16a34a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(22, 163, 74, 0.3);
+        }
+
+        .calendar-panel button:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.4);
+        }
+
+        .calendar-panel button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .calendar-panel button:hover::after {
+            width: 120px;
+            height: 120px;
+        }
+
+        .Feeder-panel {
+            width: 280px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .Feeder-panel:hover {
+            transform: translateY(-4px);
+        }
+
+        .Feeder-panel h3 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 2px solid #16a34a;
+            padding-bottom: 8px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .Feeder-panel h3::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #16a34a;
+            transition: width 0.3s ease;
+        }
+
+        .Feeder-panel h3:hover::after {
+            width: 60px;
+        }
+
+        .Feeder-panel p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        #feed-container {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            max-height: 200px;
+            gap: 5px;
+            padding-right: 5px;
+        }
+
+        #feed-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #feed-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        #feed-container::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 3px;
+        }
+
+        #feed-container::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+
+        .feed-item {
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border: 2px solid #16a34a;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            width: 100%;
+            height: 120px;
+            box-sizing: border-box;
+            min-height: 120px;
+            overflow: hidden;
+        }
+
+        .feed-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(22, 163, 74, 0.1);
+        }
+
+        .feed-item::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 6px;
+            height: 6px;
+            background: #16a34a;
+            border-radius: 50%;
+            transform: translateY(50%);
+        }
+
+        .feed-message {
+            display: none;
+        }
+
+        .feed-content {
+            color: #16a34a;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            padding: 3px;
+            background: #f0fdf4;
+            border-radius: 3px;
+            overflow-wrap: break-word;
+            max-height: 60px;
+            overflow-y: auto;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .vote-buttons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .vote-btn {
+            background: #f1f1f1;
+            border: none;
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            line-height: 1;
+        }
+
+        .vote-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .vote-btn.active-up {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .vote-btn.active-down {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .vote-count {
+            font-weight: bold;
+            font-size: 0.9rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #555;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .action-btn:hover {
+            color: #2563eb;
+        }
+
+        .edit-mode {
+            display: none;
+            margin-top: 3px;
+            width: 100%;
+        }
+
+        .edit-mode.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        textarea.edit-input {
+            width: 100%;
+            min-height: 30px;
+            padding: 2px;
+            font-size: 0.8rem;
+            border: 1px solid #d1d5db;
+            border-radius: 3px;
+            resize: vertical;
+            margin-top: 3px;
+            background: #ffffff;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-mode button {
+            padding: 2px 6px;
+            background: #16a34a;
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 3px;
+            width: fit-content;
+            align-self: flex-end;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode button:hover {
+            background: #15803d;
+            transform: translateY(-1px);
+        }
+
+        .reminder-section {
+            margin-top: 20px;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #16a34a;
+        }
+
+        .reminder-section h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .reminder-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #reminder-text {
+            width: 100%;
+            min-height: 60px;
+            padding: 10px;
+            font-size: 0.9rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            resize: vertical;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #reminder-date, #reminder-time {
+            padding: 10px;
+            font-size: 0.9rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #add-reminder-btn {
+            padding: 10px 20px;
+            background: #16a34a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3);
+            align-self: flex-end;
+        }
+
+        #add-reminder-btn:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.4);
+        }
+
+        #feeder-reminder-list {
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #feeder-reminder-list .reminder-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #16a34a;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.02);
+            transition: 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        #feeder-reminder-list .reminder-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 7px rgba(0,0,0,0.04);
+        }
+
+        #feeder-reminder-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #feeder-reminder-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 2px;
+        }
+
+        #feeder-reminder-list::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 2px;
+        }
+
+        #feeder-reminder-list::-webkit-scrollbar-thumb:hover {
+            background: #15803d;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <h2>Home</h2>
+            <a href="notifications.html">Notifications</a>
+            <a href="my_account.html">My Account</a>
+            <a href="Report.html">Report</a>
+            <a href="#" onclick="alert('Posts clicked')">Posts</a>
+            <a href="Settings.html">Settings</a>
+            <a href="#" onclick="alert('Help/Support clicked')">Help/Support</a>
+            <a href="#" onclick="logout()">Log Out</a>
+        </div>
+
+        <div class="content-area">
+            <div class="main">
+                <div class="panel profile-section">
+                    <h3>User Profile</h3>
+                    <div class="profile-container">
+                        <div class="profile-pic">
+                            <span id="profile-placeholder">Add Photo</span>
+                            <img id="profile-img" src="" alt="Profile Picture" style="display: none;">
+                            <input type="file" id="profile-upload" accept="image/*" onchange="previewImage(event)">
+                        </div>
+                        <div class="profile-info">
+                            <p><strong>Full Name:</strong> <span id="profile-fullname"></span></p>
+                            <p><strong>Email:</strong> <span id="profile-email"></span></p>
+                            <p><strong>Role:</strong> <span id="profile-role"></span></p>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="my_account.html">
+                            <button>Edit Profile</button>
+                        </a>
+                        <button onclick="changePassword()">Change Password</button>
+                    </div>
+                </div>
+
+                <div class="panel overview">
+                    <h3>Account Overview</h3>
+                    <p id="welcome-msg"></p>
+                    <p><strong>Last Login:</strong> <span id="last-login"></span></p>
+                    <p><em>Current Date and Time: 03:39 PM CAT, Thursday, July 31, 2025</em></p>
+                    <h4>Upcoming Reminders</h4>
+                    <div id="overview-reminder-list"></div>
+                </div>
+
+                <div class="panel analytics">
+                    <h3>Usage Stats</h3>
+                    <p id="login-count">You logged in <span id="login-count-number"></span> times this week. Great job staying active!</p>
+                </div>
+            </div>
+
+            <div class="calendar-panel panel">
+                <h3>Calendar</h3>
+                <div class="calendar">
+                    <div id="current-month-year"></div>
+                    <table id="calendar-table"></table>
+                </div>
+            
+                <div class="announcement-section">
+                    <h3>Announcements</h3>
+                    <textarea id="announcement-input" placeholder="Write your announcement or post here..."></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <label for="file-upload" style="cursor: pointer; background: #16a34a; color: #ffffff; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; box-shadow: 0 3px 6px rgba(22, 163, 74, 0.3); transition: all 0.3s ease;">
+                            📁 Upload File
+                            <input type="file" id="file-upload" multiple onchange="handleFileUpload(event)" style="display: none;">
+                        </label>
+                        <button onclick="saveAnnouncement()">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="Feeder-panel panel">
+                <h3>Feeder</h3>
+                <p>Here you can add your latest posts or updates.</p>
+                <div id="feed-container"></div>
+
+                <div class="reminder-section">
+                    <h3>Reminders</h3>
+                    <div class="reminder-input-container">
+                        <textarea id="reminder-text" placeholder="Add a new reminder..."></textarea>
+                        <input type="date" id="reminder-date">
+                        <input type="time" id="reminder-time">
+                    </div>
+                    <button id="add-reminder-btn" onclick="addReminder()">Add Reminder</button>
+                    <div id="feeder-reminder-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const username = localStorage.getItem('loggedInUser') || 'Guest';
+        const lastLoginTime = localStorage.getItem('lastLoginTime') || 'Not recorded';
+
+        // Track login count
+        function updateLoginCount() {
+            const now = new Date();
+            const currentWeek = getWeekNumber(now);
+            const storedWeek = localStorage.getItem('loginWeek');
+            let loginCount = parseInt(localStorage.getItem('loginCount') || 0);
+
+            if (storedWeek !== currentWeek.toString()) {
+                loginCount = 1;
+                localStorage.setItem('loginWeek', currentWeek);
+            } else {
+                loginCount += 1;
+            }
+            localStorage.setItem('loginCount', loginCount);
+
+            document.getElementById('login-count-number').textContent = loginCount;
+        }
+
+        // Get week number of the year
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        }
+
+        if (!localStorage.getItem('loggedInUser')) {
+            alert('No user logged in! Redirecting to login page.');
+            window.location.href = 'VantageFinance.html';
+        }
+
+        const accountData = JSON.parse(localStorage.getItem('accountDetails') || '{}');
+
+        if (accountData) {
+            document.getElementById('profile-fullname').textContent = accountData.fullName || 'Not specified';
+            document.getElementById('profile-email').textContent = accountData.email || 'Not specified';
+            document.getElementById('profile-role').textContent = accountData.role || 'Not specified';
+            document.getElementById('welcome-msg').textContent = `Welcome back, ${accountData.fullName || username}!`;
+        } else {
+            document.getElementById('welcome-msg').textContent = `Welcome back, ${username}!`;
+        }
+
+        // Update login count on page load
+        updateLoginCount();
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('lastLoginTime');
+            localStorage.removeItem('loginCount');
+            localStorage.removeItem('loginWeek');
+            // Keep accountDetails and userPhoto in localStorage
+            window.location.href = 'VantageFinance.html';
+        }
+
+        function changePassword() {
+            alert('Redirecting to change password page.');
+        }
+
+        function renderCalendar() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+
+            document.getElementById('current-month-year').textContent = `${months[currentMonth]} ${currentYear}`;
+
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDay = firstDay.getDay();
+
+            let calendarHTML = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>';
+            let dayCount = 1;
+
+            for (let i = 0; i < startDay; i++) {
+                calendarHTML += '<td></td>';
+            }
+
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            const reminderMap = {};
+            reminders.forEach(r => {
+                if (!reminderMap[r.date]) reminderMap[r.date] = [];
+                reminderMap[r.date].push(`${r.text} (${r.time})`);
+            });
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(currentYear, currentMonth, day).toISOString().split('T')[0];
+                const isToday = date === today.toISOString().split('T')[0] ? 'today' : '';
+                const hasReminder = reminders.some(r => r.date === date) ? 'has-reminder' : '';
+                const tooltip = hasReminder ? `<div class="reminder-tooltip">${reminderMap[date].join('<br>')}</div>` : '';
+                calendarHTML += `<td class="${isToday} ${hasReminder}" onclick="selectDate('${date}')">${day}${tooltip}</td>`;
+                if ((startDay + dayCount) % 7 === 0 && day < daysInMonth) {
+                    calendarHTML += '</tr><tr>';
+                }
+                dayCount++;
+            }
+
+            const remainingCells = 7 - ((startDay + daysInMonth) % 7);
+            if (remainingCells > 0 && remainingCells < 7) {
+                for (let i = 0; i < remainingCells; i++) {
+                    calendarHTML += '<td></td>';
+                }
+            }
+            calendarHTML += '</tr>';
+
+            document.getElementById('calendar-table').innerHTML = calendarHTML;
+        }
+
+        // Preview and persist uploaded profile picture
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profileImg = document.getElementById('profile-img');
+                    const profilePlaceholder = document.getElementById('profile-placeholder');
+                    profileImg.src = e.target.result;
+                    profileImg.style.display = 'block';
+                    profilePlaceholder.style.display = 'none';
+                    localStorage.setItem('userPhoto', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Load and save announcement with file support
+        function saveAnnouncement() {
+            const announcementInput = document.getElementById('announcement-input');
+            const fileInput = document.getElementById('file-upload');
+            const announcement = announcementInput.value.trim();
+            if (announcement || fileInput.files.length > 0) {
+                let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
+                let uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+
+                if (announcement) {
+                    announcements.push(announcement);
+                }
+
+                if (fileInput.files.length > 0) {
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const file = fileInput.files[i];
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            uploadedFiles.push({ name: file.name, data: e.target.result });
+                            localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+                            renderFeed();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                localStorage.setItem('announcements', JSON.stringify(announcements));
+                announcementInput.value = '';
+                fileInput.value = '';
+                renderFeed();
+            } else {
+                console.log('No announcement or files to save');
+            }
+        }
+
+        // Handle file upload
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                console.log('Files selected:', files);
+            }
+        }
+
+        // Render feed items including files
+        function renderFeed() {
+            const feedContainer = document.getElementById('feed-container');
+            const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
+            const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+            feedContainer.innerHTML = '';
+
+            announcements.forEach((announcement, index) => {
+                const feedItem = document.createElement('div');
+                feedItem.className = 'feed-item';
+                feedItem.innerHTML = `
+                    <div class="feed-content">${announcement}</div>
+                    <div class="vote-buttons">
+                        <button class="vote-btn" id="upvoteBtn-${index}" onclick="vote(${index}, 'up')">👍</button>
+                        <span class="vote-count" id="vote-count-${index}">0</span>
+                        <button class="vote-btn" id="downvoteBtn-${index}" onclick="vote(${index}, 'down')">👎</button>
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="editPost(${index})">✏️</button>
+                            <button class="action-btn" onclick="deletePost(${index})">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="edit-mode" id="edit-mode-${index}">
+                        <textarea class="edit-input" id="edit-input-${index}">${announcement}</textarea>
+                        <button onclick="saveEdit(${index})">Save</button>
+                    </div>
+                `;
+                feedContainer.appendChild(feedItem);
+            });
+
+            uploadedFiles.forEach((file, index) => {
+                const fileIndex = announcements.length + index;
+                const feedItem = document.createElement('div');
+                feedItem.className = 'feed-item';
+                feedItem.innerHTML = `
+                    <a href="${file.data}" class="feed-content" download="${file.name}" target="_blank">${file.name}</a>
+                    <div class="vote-buttons">
+                        <button class="vote-btn" id="upvoteBtn-${fileIndex}" onclick="vote(${fileIndex}, 'up')">👍</button>
+                        <span class="vote-count" id="vote-count-${fileIndex}">0</span>
+                        <button class="vote-btn" id="downvoteBtn-${fileIndex}" onclick="vote(${fileIndex}, 'down')">👎</button>
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="deleteFile(${index})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                feedContainer.appendChild(feedItem);
+            });
+
+            [...announcements, ...uploadedFiles].forEach((_, index) => {
+                const savedVote = localStorage.getItem(`voteCount-${index}`) || 0;
+                updateVoteCount(index, savedVote);
+            });
+        }
+
+        // Handle voting
+        function vote(index, direction) {
+            let voteCount = parseInt(localStorage.getItem(`voteCount-${index}`) || 0);
+            if (direction === 'up') {
+                voteCount += 1;
+            } else if (direction === 'down') {
+                voteCount -= 1;
+            }
+            localStorage.setItem(`voteCount-${index}`, voteCount);
+            updateVoteCount(index, voteCount);
+        }
+
+        // Update vote count display
+        function updateVoteCount(index, count) {
+            const voteCountElement = document.getElementById(`vote-count-${index}`);
+            if (voteCountElement) {
+                voteCountElement.textContent = count;
+            }
+        }
+
+        // Delete post
+        function deletePost(index) {
+            let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
+            announcements.splice(index, 1);
+            localStorage.setItem('announcements', JSON.stringify(announcements));
+            localStorage.removeItem(`voteCount-${index}`);
+            renderFeed();
+        }
+
+        // Delete file
+        function deleteFile(index) {
+            let uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+            uploadedFiles.splice(index, 1);
+            localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+            localStorage.removeItem(`voteCount-${announcements.length + index}`);
+            renderFeed();
+        }
+
+        // Edit post
+        function editPost(index) {
+            const editMode = document.getElementById(`edit-mode-${index}`);
+            editMode.classList.add('active');
+            const editInput = document.getElementById(`edit-input-${index}`);
+            editInput.focus();
+        }
+
+        // Save edited post
+        function saveEdit(index) {
+            const editInput = document.getElementById(`edit-input-${index}`);
+            let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
+            announcements[index] = editInput.value.trim();
+            localStorage.setItem('announcements', JSON.stringify(announcements));
+            const editMode = document.getElementById(`edit-mode-${index}`);
+            editMode.classList.remove('active');
+            renderFeed();
+        }
+
+        // Select date from calendar and show reminders in feeder panel
+        function selectDate(dateStr) {
+            document.getElementById('reminder-date').value = dateStr;
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            const dateReminders = reminders.filter(r => r.date === dateStr);
+            if (dateReminders.length > 0) {
+                document.getElementById('reminder-text').value = dateReminders[0].text;
+                document.getElementById('reminder-time').value = dateReminders[0].time;
+            } else {
+                document.getElementById('reminder-text').value = '';
+                document.getElementById('reminder-time').value = '';
+            }
+            renderFeederReminders(dateStr);
+        }
+
+        // Add reminder with date and time, display on calendar and overview
+        function addReminder() {
+            const reminderText = document.getElementById('reminder-text').value.trim();
+            const reminderDate = document.getElementById('reminder-date').value;
+            const reminderTime = document.getElementById('reminder-time').value;
+            if (reminderText && reminderDate && reminderTime) {
+                const reminder = { text: reminderText, date: reminderDate, time: reminderTime };
+                let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+                reminders.push(reminder);
+                localStorage.setItem('reminders', JSON.stringify(reminders));
+                document.getElementById('reminder-text').value = '';
+                document.getElementById('reminder-date').value = '';
+                document.getElementById('reminder-time').value = '';
+                renderCalendar();
+                renderOverviewReminders();
+                renderFeederReminders(reminderDate);
+            }
+        }
+
+        // Render reminders in the Account Overview panel
+        function renderOverviewReminders() {
+            const overviewReminderList = document.getElementById('overview-reminder-list');
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            overviewReminderList.innerHTML = '';
+
+            if (reminders.length === 0) {
+                overviewReminderList.innerHTML = '<p>No reminders yet.</p>';
+                return;
+            }
+
+            reminders.forEach((reminder, index) => {
+                const reminderItem = document.createElement('div');
+                reminderItem.className = 'reminder-card';
+                reminderItem.innerHTML = `
+                    <input type="checkbox" class="checkbox" />
+                    <div class="reminder-details">
+                        <div class="reminder-title">${reminder.text}</div>
+                        <div class="reminder-time">${reminder.date} ${reminder.time}</div>
+                        <button class="delete-btn" onclick="deleteReminder(${index})">Delete</button>
+                    </div>
+                `;
+                overviewReminderList.appendChild(reminderItem);
+            });
+        }
+
+        // Render reminders in the Feeder panel for the selected date
+        function renderFeederReminders(dateStr) {
+            const feederReminderList = document.getElementById('feeder-reminder-list');
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            const dateReminders = reminders.filter(r => r.date === dateStr);
+            feederReminderList.innerHTML = '';
+
+            if (dateReminders.length === 0) {
+                feederReminderList.innerHTML = '<p>No reminders for this date.</p>';
+                return;
+            }
+
+            dateReminders.forEach((reminder, index) => {
+                const globalIndex = reminders.findIndex(r => r.date === reminder.date && r.text === reminder.text && r.time === reminder.time);
+                const reminderItem = document.createElement('div');
+                reminderItem.className = 'reminder-card';
+                reminderItem.innerHTML = `
+                    <input type="checkbox" class="checkbox" />
+                    <div class="reminder-details">
+                        <div class="reminder-title">${reminder.text}</div>
+                        <div class="reminder-time">${reminder.date} ${reminder.time}</div>
+                        <button class="delete-btn" onclick="deleteReminder(${globalIndex})">Delete</button>
+                    </div>
+                `;
+                feederReminderList.appendChild(reminderItem);
+            });
+        }
+
+        // Delete reminder
+        function deleteReminder(index) {
+            const list = document.getElementById("overview-reminder-list");
+            const items = list.getElementsByClassName("reminder-card");
+            if (items[index]) {
+                list.removeChild(items[index]);
+                let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+                const deletedReminderDate = reminders[index].date;
+                reminders.splice(index, 1);
+                localStorage.setItem('reminders', JSON.stringify(reminders));
+                renderCalendar();
+                renderOverviewReminders();
+                renderFeederReminders(document.getElementById('reminder-date').value || deletedReminderDate);
+            }
+        }
+
+        // Load persisted user photo and feed on page load
+        window.onload = function() {
+            const savedPhoto = localStorage.getItem('userPhoto');
+            if (savedPhoto) {
+                const profileImg = document.getElementById('profile-img');
+                const profilePlaceholder = document.getElementById('profile-placeholder');
+                profileImg.src = savedPhoto;
+                profileImg.style.display = 'block';
+                profilePlaceholder.style.display = 'none';
+            }
+            renderFeed();
+            renderCalendar();
+            renderOverviewReminders();
+        };
+    </script>
+</body>
+</html>

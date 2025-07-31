@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    }
+    .glass {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-10">
+  <div class="glass w-full max-w-4xl p-8 text-white space-y-6">
+    <h2 class="text-2xl font-bold mb-4">⚙️ Settings</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- Security Section -->
+      <div>
+        <h3 class="text-xl font-semibold mb-3">🔐 Security</h3>
+        <div class="space-y-3">
+          <input type="password" id="current-password" placeholder="Current Password" class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-10 placeholder-white placeholder-opacity-70">
+          <input type="password" id="new-password" placeholder="New Password" class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-10 placeholder-white placeholder-opacity-70">
+          <input type="password" id="confirm-password" placeholder="Confirm New Password" class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-10 placeholder-white placeholder-opacity-70">
+          <button onclick="changePassword()" class="w-full bg-pink-500 py-2 rounded-lg hover:bg-pink-600 font-semibold">Update Password</button>
+        </div>
+      </div>
+
+      <!-- Preferences Section -->
+      <div>
+        <h3 class="text-xl font-semibold mb-3">🎨 Preferences</h3>
+        <div class="space-y-3">
+          <select class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-10 text-white">
+            <option selected>🌐 Language: English</option>
+            <option>🇫🇷 French</option>
+            <option>🇪🇸 Spanish</option>
+          </select>
+          <label class="flex items-center">
+            <input type="checkbox" id="darkMode" class="mr-2"> 🌙 Enable Dark Mode
+          </label>
+          <button onclick="deleteAccount()" class="w-full bg-red-500 py-2 rounded-lg hover:bg-red-600 font-semibold">🗑️ Delete My Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) window.location.href = 'VantageFinance.html';
+
+    function changePassword() {
+      const current = document.getElementById('current-password').value;
+      const newPass = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+      const userData = JSON.parse(localStorage.getItem(loggedInUser));
+
+      if (!current || !newPass || !confirm) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      if (userData.password !== current) {
+        alert('Current password is incorrect.');
+        return;
+      }
+
+      if (newPass !== confirm) {
+        alert('New passwords do not match.');
+        return;
+      }
+
+      userData.password = newPass;
+      localStorage.setItem(loggedInUser, JSON.stringify(userData));
+      alert('Password updated successfully.');
+      document.getElementById('current-password').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('lastLoginTime');
+      window.location.href = 'VantageFinance.html';
+    }
+
+    function deleteAccount() {
+      if (confirm('Are you sure you want to delete your account?')) {
+        localStorage.removeItem(loggedInUser);
+        logout();
+      }
+    }
+  </script>
+</body>
+</html>

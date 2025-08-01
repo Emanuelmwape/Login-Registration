@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Glass Login & Registration</title>
+  <title>Vantage Finance - Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body::before {
@@ -45,7 +45,6 @@
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center px-4">
-
   <div class="glass w-full max-w-sm rounded-2xl shadow-2xl p-5 text-white">
     <!-- Register Form -->
     <div id="register-form">
@@ -109,12 +108,12 @@
   </div>
 
   <script>
-    function register() {
-      const fullname = document.getElementById('reg-fullname').value;
-      const email = document.getElementById('reg-email').value;
-      const username = document.getElementById('reg-username').value;
-      const password = document.getElementById('reg-password').value;
-      const confirmPassword = document.getElementById('reg-confirm-password').value;
+    async function register() {
+      const fullname = document.getElementById('reg-fullname').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value.trim();
+      const confirmPassword = document.getElementById('reg-confirm-password').value.trim();
       const terms = document.getElementById('terms').checked;
 
       if (!fullname || !email || !username || !password || !confirmPassword || !terms) {
@@ -127,37 +126,85 @@
         return;
       }
 
-
-
-      const userData = { fullName: fullname, email: email, password: password };
-      localStorage.setItem(username, JSON.stringify(userData));
-      alert('Registration successful! Please log in.');
-      showLogin();
-    }
-
-    function login() {
-      const username = document.getElementById('login-username').value;
-      const password = document.getElementById('login-password').value;
-      const stored = localStorage.getItem(username);
-
-      if (stored) {
-        const userData = JSON.parse(stored);
-        if (userData.password === password) {
-          localStorage.setItem('loggedInUser', username);
-          localStorage.setItem('lastLoginTime', new Date().toLocaleString());
-          window.location.href = 'dashboard.html'; // Optional redirect
-        } else {
-          alert('Incorrect password.');
+      try {
+        const response = await fetch('http://localhost:3000/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, fullName: fullname, email, password })
+        });
+        const data = await response.json();
+        if (data.error) {
+          alert(data.error);
+          return;
         }
-      } else {
-        alert('Invalid credentials.');
+        alert('Registration successful! Please log in.');
+        showLogin();
+      } catch (error) {
+        alert('Registration failed');
+        console.error(error);
       }
     }
 
-    function logout() {
+    async function login() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+
+      if (!username || !password) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        localStorage.setItem('loggedInUser', username);
+        localStorage.setItem('accountDetails', JSON.stringify({
+          fullName: data.fullName,
+          email: data.email,
+          role: 'User'
+        }));
+        localStorage.setItem('lastLoginTime', new Date().toLocaleString());
+        window.location.href = 'index.html';
+      } catch (error) {
+        alert('Login failed');
+        console.error(error);
+      }
+    }
+
+    async function logout() {
+      const username = localStorage.getItem('loggedInUser');
+      if (username) {
+        try {
+          const response = await fetch('http://localhost:3000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password: 'dummy' })
+          });
+          const data = await response.json();
+          if (!data.error) {
+            await fetch('http://localhost:3000/api/auth/logout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: data.id })
+            });
+          }
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+      }
       localStorage.removeItem('loggedInUser');
       localStorage.removeItem('lastLoginTime');
-      window.location.href = 'VantageFinance.html'; // Replace with your homepage
+      localStorage.removeItem('loginCount');
+      localStorage.removeItem('loginWeek');
+      window.location.href = 'VantageFinance.html';
     }
 
     function showLogin() {
@@ -175,13 +222,13 @@
     window.onload = function () {
       const loggedInUser = localStorage.getItem('loggedInUser');
       if (loggedInUser) {
-        const userData = JSON.parse(localStorage.getItem(loggedInUser));
-        document.getElementById('username-display').textContent = userData.fullName || loggedInUser;
+        const accountData = JSON.parse(localStorage.getItem('accountDetails') || '{}');
+        document.getElementById('username-display').textContent = accountData.fullName || loggedInUser;
         document.getElementById('register-form').classList.add('hidden');
         document.getElementById('login-form').classList.add('hidden');
         document.getElementById('welcome').classList.remove('hidden');
       }
-    }
+    };
   </script>
 </body>
 </html>

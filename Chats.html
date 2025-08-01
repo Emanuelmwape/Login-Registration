@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Chat UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b7280;
+      --secondary: #9ca3af;
+      --bg-light: #f9fafb;
+      --bg-dark: #1f2937;
+      --chat-received: #f3e8ff;
+      --chat-sent: #e0f2fe;
+      --text-dark: #374151;
+      --text-light: #f3f4f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+      height: 100vh;
+      display: flex;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode {
+      background: #1f2937;
+      color: var(--text-light);
+    }
+
+    .sidebar {
+      width: 280px;
+      background: white;
+      color: var(--text-dark);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    }
+
+    body.dark-mode .sidebar {
+      background: #374151;
+    }
+
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dark-mode-toggle {
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--primary);
+    }
+
+    .contact-search {
+      padding: 10px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      color: var(--text-dark);
+      font-size: 14px;
+    }
+
+    body.dark-mode .contact-search {
+      background: #4b5563;
+      border-color: #6b7280;
+      color: var(--text-light);
+    }
+
+    .contact-search::placeholder {
+      color: #9ca3af;
+    }
+
+    .contact {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      gap: 12px;
+      background: #f9fafb;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    body.dark-mode .contact {
+      background: #4b5563;
+    }
+
+    .contact:hover {
+      background: #f3f4f6;
+    }
+
+    body.dark-mode .contact:hover {
+      background: #6b7280;
+    }
+
+    .contact img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #e5e7eb;
+    }
+
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode .chat-area {
+      background-color: var(--bg-dark);
+    }
+
+    .chat-header {
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    body.dark-mode .chat-header {
+      background: #374151;
+      border-bottom: 1px solid #4b5563;
+    }
+
+    .chat-header img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    .chat-header span {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .message-search {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+      margin-left: auto;
+      width: 200px;
+    }
+
+    body.dark-mode .message-search {
+      background: #4b5563;
+      border-color: #6b7280;
+      color: var(--text-light);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    body.dark-mode .chat-messages {
+      background: #1f2937;
+    }
+
+    .message-container {
+      max-width: 75%;
+      animation: fadeIn 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sent {
+      align-self: flex-end;
+      background-color: var(--chat-sent);
+      padding: 12px 16px;
+      border-radius: 12px 12px 2px 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .received {
+      align-self: flex-start;
+      background-color: var(--chat-received);
+      padding: 12px 16px;
+      border-radius: 12px 12px 12px 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .message-container:hover .message-actions {
+      display: flex;
+    }
+
+    .message-actions {
+      display: none;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      gap: 4px;
+    }
+
+    .action-btn {
+      background: #d1d5db;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    .delete-btn {
+      background: #f87171;
+    }
+
+    .copy-btn {
+      background: #60a5fa;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 4px;
+      align-self: flex-end;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .read-receipt {
+      font-size: 9px;
+      color: #3b82f6;
+    }
+
+    body.dark-mode .timestamp {
+      color: #9ca3af;
+    }
+
+    .typing-indicator {
+      font-size: 12px;
+      color: #6b7280;
+      font-style: italic;
+      padding-left: 16px;
+      margin-top: -4px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 16px 24px;
+      border-top: 1px solid #e5e7eb;
+      background: white;
+      align-items: center;
+    }
+
+    body.dark-mode .chat-input {
+      background: #374151;
+      border-top: 1px solid #4b5563;
+    }
+
+    .chat-input input[type="text"] {
+      flex: 1;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      outline: none;
+      margin-right: 8px;
+    }
+
+    body.dark-mode .chat-input input[type="text"] {
+      background: #4b5563;
+      border-color: #6b7280;
+      color: var(--text-light);
+    }
+
+    .chat-input button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input button:hover {
+      background: var(--secondary);
+    }
+
+    .emoji-btn, .attach-btn {
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 8px;
+    }
+
+    .emoji-picker {
+      display: none;
+      position: absolute;
+      bottom: 60px;
+      right: 24px;
+      background: white;
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode .emoji-picker {
+      background: #374151;
+    }
+
+    .emoji-picker span {
+      cursor: pointer;
+      padding: 4px;
+      font-size: 18px;
+    }
+
+    .file-preview {
+      margin-top: 6px;
+      padding: 6px;
+      background: #f3f4f6;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    body.dark-mode .file-preview {
+      background: #4b5563;
+    }
+
+    .file-preview img {
+      max-width: 40px;
+      max-height: 40px;
+      border-radius: 4px;
+    }
+
+    .file-preview span {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    body.dark-mode .file-preview span {
+      color: #9ca3af;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .chat-area {
+        width: 100%;
+      }
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background-color: #d1d5db;
+      border-radius: 4px;
+    }
+
+    body.dark-mode .chat-messages::-webkit-scrollbar-thumb {
+      background-color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>Chats <i class="fas fa-moon dark-mode-toggle" onclick="toggleDarkMode()"></i></h2>
+  <input type="text" class="contact-search" id="contactSearch" placeholder="Search contacts...">
+  <div class="contact" data-name="John Doe">
+    <img src="https://i.pravatar.cc/40?img=1" alt="User">
+    <span>John Doe</span>
+  </div>
+  <div class="contact" data-name="Jane Smith">
+    <img src="https://i.pravatar.cc/40?img=2" alt="User">
+    <span>Jane Smith</span>
+  </div>
+  <div class="contact" data-name="Support Bot">
+    <img src="https://i.pravatar.cc/40?img=3" alt="Bot">
+    <span>Support Bot</span>
+  </div>
+</div>
+
+<div class="chat-area">
+  <div class="chat-header">
+    <img src="https://i.pravatar.cc/40?img=3" alt="Bot">
+    <span>Support Bot</span>
+    <input type="text" class="message-search" id="messageSearch" placeholder="Search messages...">
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="typing-indicator" id="typingIndicator" style="display: none;">Bot is typing...</div>
+
+  <div class="chat-input">
+    <input type="file" id="fileInput" style="display: none;" accept="image/*">
+    <button class="attach-btn" onclick="document.getElementById('fileInput').click()"><i class="fas fa-paperclip"></i></button>
+    <button class="emoji-btn" onclick="toggleEmojiPicker()">😊</button>
+    <input type="text" id="chatInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+    <div class="emoji-picker" id="emojiPicker">
+      <span onclick="addEmoji('😊')">😊</span>
+      <span onclick="addEmoji('😂')">😂</span>
+      <span onclick="addEmoji('😍')">😍</span>
+      <span onclick="addEmoji('👍')">👍</span>
+      <span onclick="addEmoji('🎉')">🎉</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const emojiPicker = document.getElementById('emojiPicker');
+  const fileInput = document.getElementById('fileInput');
+  const messageSearch = document.getElementById('messageSearch');
+  const contactSearch = document.getElementById('contactSearch');
+
+  let messages = [];
+
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    const file = fileInput.files[0];
+    if (!text && !file) return;
+
+    const message = {
+      id: Date.now(),
+      text: text || '',
+      type: 'sent',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      read: false,
+      file: file ? URL.createObjectURL(file) : null,
+      fileName: file ? file.name : null
+    };
+
+    addMessage(message);
+    messages.push(message);
+    chatInput.value = '';
+    fileInput.value = '';
+    showTypingIndicator();
+
+    setTimeout(() => {
+      hideTypingIndicator();
+      const botMessage = {
+        id: Date.now(),
+        text: "I'm here to help you! 😊",
+        type: 'received',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        read: true
+      };
+      addMessage(botMessage);
+      messages.push(botMessage);
+      updateReadReceipts();
+    }, 1000);
+  }
+
+  function addMessage(message) {
+    const container = document.createElement('div');
+    container.className = 'message-container';
+    container.dataset.id = message.id;
+
+    const msg = document.createElement('div');
+    msg.className = message.type;
+    msg.textContent = message.text;
+
+    if (message.file) {
+      const filePreview = document.createElement('div');
+      filePreview.className = 'file-preview';
+      if (message.fileName.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        const img = document.createElement('img');
+        img.src = message.file;
+        filePreview.appendChild(img);
+      }
+      const fileName = document.createElement('span');
+      fileName.textContent = message.fileName;
+      filePreview.appendChild(fileName);
+      msg.appendChild(filePreview);
+    }
+
+    const timestamp = document.createElement('div');
+    timestamp.className = 'timestamp';
+    timestamp.textContent = message.timestamp;
+    
+    if (message.type === 'sent') {
+      const readReceipt = document.createElement('span');
+      readReceipt.className = 'read-receipt';
+      readReceipt.textContent = message.read ? 'Read' : 'Sent';
+      timestamp.appendChild(readReceipt);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'message-actions';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'action-btn delete-btn';
+    deleteBtn.innerHTML = '×';
+    deleteBtn.onclick = () => {
+      container.remove();
+      messages = messages.filter(m => m.id !== message.id);
+    };
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'action-btn copy-btn';
+    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(message.text);
+      copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i>', 1000);
+    };
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(deleteBtn);
+
+    container.appendChild(msg);
+    container.appendChild(timestamp);
+    container.appendChild(actions);
+    chatMessages.appendChild(container);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function showTypingIndicator() {
+    typingIndicator.style.display = 'block';
+  }
+
+  function hideTypingIndicator() {
+    typingIndicator.style.display = 'none';
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const toggleIcon = document.querySelector('.dark-mode-toggle');
+    toggleIcon.classList.toggle('fa-moon');
+    toggleIcon.classList.toggle('fa-sun');
+  }
+
+  function toggleEmojiPicker() {
+    emojiPicker.style.display = emojiPicker.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function addEmoji(emoji) {
+    chatInput.value += emoji;
+    emojiPicker.style.display = 'none';
+    chatInput.focus();
+  }
+
+  function updateReadReceipts() {
+    messages.forEach(message => {
+      if (message.type === 'sent') {
+        const container = document.querySelector(`.message-container[data-id="${message.id}"]`);
+        if (container) {
+          const readReceipt = container.querySelector('.read-receipt');
+          if (readReceipt) {
+            readReceipt.textContent = message.read ? 'Read' : 'Sent';
+          }
+        }
+      }
+    });
+  }
+
+  messageSearch.addEventListener('input', () => {
+    const searchTerm = messageSearch.value.toLowerCase();
+    document.querySelectorAll('.message-container').forEach(container => {
+      const text = container.querySelector('div.sent, div.received').textContent.toLowerCase();
+      container.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+    });
+  });
+
+  contactSearch.addEventListener('input', () => {
+    const searchTerm = contactSearch.value.toLowerCase();
+    document.querySelectorAll('.contact').forEach(contact => {
+      const name = contact.dataset.name.toLowerCase();
+      contact.style.display = name.includes(searchTerm) ? 'flex' : 'none';
+    });
+  });
+
+  chatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!emojiPicker.contains(e.target) && !e.target.classList.contains('emoji-btn')) {
+      emojiPicker.style.display = 'none';
+    }
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) {
+      chatInput.focus();
+    }
+  });
+</script>
+
+</body>
+</html>

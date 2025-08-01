@@ -10,7 +10,6 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
@@ -21,7 +20,6 @@
             justify-content: center;
             align-items: flex-start;
         }
-
         .container {
             max-width: 900px;
             width: 100%;
@@ -31,11 +29,9 @@
             overflow: hidden;
             transition: transform 0.3s ease;
         }
-
         .container:hover {
             transform: translateY(-5px);
         }
-
         h1 {
             background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
             color: #f1f5f9;
@@ -45,7 +41,6 @@
             font-weight: 600;
             border-bottom: 3px solid #16a34a;
         }
-
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -54,7 +49,6 @@
             background: #f0fdf4;
             border-bottom: 1px solid #e5e7eb;
         }
-
         .user-photo {
             width: 48px;
             height: 48px;
@@ -66,19 +60,16 @@
             transition: all 0.3s ease;
             border: 2px solid #16a34a;
         }
-
         .user-photo.dragover {
             background: #16a34a;
             border: 2px dashed #ffffff;
         }
-
         .user-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
         }
-
         .user-photo input[type="file"] {
             position: absolute;
             width: 100%;
@@ -86,7 +77,6 @@
             opacity: 0;
             cursor: pointer;
         }
-
         .status {
             font-size: 1rem;
             color: #16a34a;
@@ -97,13 +87,11 @@
             border-radius: 5px;
             display: inline-block;
         }
-
         .notification-count {
             font-size: 1rem;
             color: #16a34a;
             font-weight: 600;
         }
-
         .notification-grid {
             padding: 20px;
             display: grid;
@@ -112,7 +100,6 @@
             max-height: 450px;
             overflow-y: auto;
         }
-
         .notification-card {
             background: #f0fdf4;
             border: 1px solid #e5e7eb;
@@ -121,25 +108,21 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .notification-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
-
         .notification-card p {
             margin: 8px 0;
             font-size: 0.95rem;
             color: #16a34a;
             font-weight: 500;
         }
-
         .notification-card .date {
             font-size: 0.85rem;
             color: #475569;
             text-align: right;
         }
-
         .action-buttons {
             padding: 20px;
             background: #f0fdf4;
@@ -148,7 +131,6 @@
             justify-content: flex-end;
             gap: 15px;
         }
-
         .action-buttons button {
             padding: 10px 20px;
             background: #16a34a;
@@ -163,13 +145,11 @@
             position: relative;
             overflow: hidden;
         }
-
         .action-buttons button:hover {
             background: #15803d;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(22, 163, 74, 0.4);
         }
-
         .action-buttons button::after {
             content: '';
             position: absolute;
@@ -182,12 +162,10 @@
             transform: translate(-50%, -50%);
             transition: width 0.4s ease, height 0.4s ease;
         }
-
         .action-buttons button:hover::after {
             width: 150px;
             height: 150px;
         }
-
         .nav-link {
             display: block;
             text-align: center;
@@ -198,12 +176,10 @@
             font-weight: 600;
             transition: color 0.3s;
         }
-
         .nav-link:hover {
             color: #15803d;
             text-decoration: underline;
         }
-
         .timestamp {
             text-align: center;
             padding: 15px;
@@ -222,7 +198,7 @@
             <div class="user-photo" id="user-photo">
                 <span id="photo-placeholder">Add Photo</span>
                 <img id="user-photo-img" src="" alt="User Photo" style="display: none;">
-                <input type="file" id="photo-upload" accept="image/*" onchange="previewImage(event)">
+                <input type="file" id="photo-upload" accept="image/*">
             </div>
             <div class="status">Notifications Status: Active</div>
             <div class="notification-count" id="notification-count">Notifications: 0</div>
@@ -233,29 +209,49 @@
             <button onclick="markAllRead()">Mark All Read</button>
         </div>
         <a href="dashboard.html" class="nav-link">← Back to Home</a>
-            </div>
-
+        <div class="timestamp" id="timestamp"></div>
+    </div>
     <script>
+        // Sanitize input to prevent XSS
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
         // Load notifications from localStorage
         function loadNotifications() {
-            const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
-            const grid = document.getElementById('notification-grid');
-            const countElement = document.getElementById('notification-count');
-            grid.innerHTML = '';
-            storedNotifications.forEach(notification => {
-                const card = document.createElement('div');
-                card.className = 'notification-card';
-                card.innerHTML = `<p>${notification}</p><div class="date">${getCurrentDateTime()}</div>`;
-                grid.appendChild(card);
-            });
-            countElement.textContent = `Notifications: ${storedNotifications.length}`;
-            updateDashboardCount();
+            try {
+                const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+                const grid = document.getElementById('notification-grid');
+                const countElement = document.getElementById('notification-count');
+                grid.innerHTML = '';
+                
+                storedNotifications.forEach(notification => {
+                    const card = document.createElement('div');
+                    card.className = 'notification-card';
+                    card.innerHTML = `<p>${sanitizeInput(notification.message)}</p><div class="date">${notification.date || getCurrentDateTime()}</div>`;
+                    grid.appendChild(card);
+                });
+                
+                countElement.textContent = `Notifications: ${storedNotifications.length}`;
+                updateDashboardCount();
+                updateTimestamp();
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
         }
 
         // Update dashboard count via localStorage
         function updateDashboardCount() {
             const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
             localStorage.setItem('notificationCount', notifications.length);
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            const timestamp = document.getElementById('timestamp');
+            timestamp.textContent = `Last updated: ${getCurrentDateTime()}`;
         }
 
         // Clear all notifications
@@ -265,39 +261,54 @@
             loadNotifications();
         }
 
-        // Mark all as read (placeholder functionality)
+        // Mark all as read
         function markAllRead() {
-            alert('All notifications marked as read!');
+            try {
+                const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+                notifications.forEach(notification => notification.read = true);
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+                alert('All notifications marked as read!');
+                loadNotifications();
+            } catch (error) {
+                console.error('Error marking notifications as read:', error);
+            }
         }
 
         // Get current date and time
         function getCurrentDateTime() {
             const now = new Date();
-            return now.toLocaleString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true, 
+            return now.toLocaleString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
                 timeZoneName: 'short',
-                month: 'long', 
-                day: 'numeric', 
+                month: 'long',
+                day: 'numeric',
                 year: 'numeric'
             });
         }
 
         // Preview and persist uploaded profile picture
         function previewImage(event) {
-            const file = event.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const userPhotoImg = document.getElementById('user-photo-img');
-                    const photoPlaceholder = document.getElementById('photo-placeholder');
-                    userPhotoImg.src = e.target.result;
-                    userPhotoImg.style.display = 'block';
-                    photoPlaceholder.style.display = 'none';
-                    localStorage.setItem('userPhoto', e.target.result);
-                };
-                reader.readAsDataURL(file);
+            try {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/') && file.size < 5000000) { // Limit to 5MB
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const userPhotoImg = document.getElementById('user-photo-img');
+                        const photoPlaceholder = document.getElementById('photo-placeholder');
+                        userPhotoImg.src = e.target.result;
+                        userPhotoImg.style.display = 'block';
+                        photoPlaceholder.style.display = 'none';
+                        localStorage.setItem('userPhoto', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please upload a valid image file (max 5MB).');
+                }
+            } catch (error) {
+                console.error('Error previewing image:', error);
+                alert('Error uploading image.');
             }
         }
 
@@ -318,33 +329,48 @@
         userPhoto.addEventListener('drop', (e) => {
             e.preventDefault();
             userPhoto.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    userPhotoImg.src = event.target.result;
-                    userPhotoImg.style.display = 'block';
-                    photoPlaceholder.style.display = 'none';
-                    localStorage.setItem('userPhoto', event.target.result);
-                };
-                reader.readAsDataURL(file);
+            try {
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/') && file.size < 5000000) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        userPhotoImg.src = event.target.result;
+                        userPhotoImg.style.display = 'block';
+                        photoPlaceholder.style.display = 'none';
+                        localStorage.setItem('userPhoto', event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please drop a valid image file (max 5MB).');
+                }
+            } catch (error) {
+                console.error('Error handling dropped image:', error);
+                alert('Error uploading image.');
             }
         });
 
-        // Load persisted user photo on page load
-        window.onload = function () {
-            if (!localStorage.getItem('loggedInUser')) {
-                alert('No user logged in. Redirecting to login page.');
-                window.location.href = 'dashboard.html';
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (!localStorage.getItem('loggedInUser')) {
+                    alert('No user logged in. Redirecting to login page.');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                const savedPhoto = localStorage.getItem('userPhoto');
+                if (savedPhoto) {
+                    userPhotoImg.src = savedPhoto;
+                    userPhotoImg.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                }
+
+                document.getElementById('photo-upload').addEventListener('change', previewImage);
+                loadNotifications();
+            } catch (error) {
+                console.error('Error initializing page:', error);
             }
-            const savedPhoto = localStorage.getItem('userPhoto');
-            if (savedPhoto) {
-                userPhotoImg.src = savedPhoto;
-                userPhotoImg.style.display = 'block';
-                photoPlaceholder.style.display = 'none';
-            }
-            loadNotifications();
-        };
+        });
     </script>
 </body>
 </html>

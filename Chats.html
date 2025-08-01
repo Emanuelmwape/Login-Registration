@@ -17,13 +17,11 @@
       --text-dark: #374151;
       --text-light: #f3f4f6;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
       font-family: 'Inter', sans-serif;
       background: #f3f4f6;
@@ -32,12 +30,10 @@
       color: var(--text-dark);
       transition: all 0.3s ease;
     }
-
     body.dark-mode {
       background: #1f2937;
       color: var(--text-light);
     }
-
     .sidebar {
       width: 280px;
       background: white;
@@ -47,11 +43,9 @@
       flex-direction: column;
       box-shadow: 2px 0 8px rgba(0,0,0,0.05);
     }
-
     body.dark-mode .sidebar {
       background: #374151;
     }
-
     .sidebar h2 {
       font-size: 18px;
       margin-bottom: 20px;
@@ -60,13 +54,11 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .dark-mode-toggle {
       cursor: pointer;
       font-size: 16px;
       color: var(--primary);
     }
-
     .contact-search {
       padding: 10px;
       margin-bottom: 16px;
@@ -76,17 +68,14 @@
       color: var(--text-dark);
       font-size: 14px;
     }
-
     body.dark-mode .contact-search {
       background: #4b5563;
       border-color: #6b7280;
       color: var(--text-light);
     }
-
     .contact-search::placeholder {
       color: #9ca3af;
     }
-
     .contact {
       display: flex;
       align-items: center;
@@ -98,26 +87,21 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
     body.dark-mode .contact {
       background: #4b5563;
     }
-
     .contact:hover {
       background: #f3f4f6;
     }
-
     body.dark-mode .contact:hover {
       background: #6b7280;
     }
-
     .contact img {
       width: 36px;
       height: 36px;
       border-radius: 50%;
       border: 1px solid #e5e7eb;
     }
-
     .chat-area {
       flex: 1;
       display: flex;
@@ -125,11 +109,9 @@
       background-color: white;
       transition: all 0.3s ease;
     }
-
     body.dark-mode .chat-area {
       background-color: var(--bg-dark);
     }
-
     .chat-header {
       padding: 16px 24px;
       background: white;
@@ -139,23 +121,19 @@
       gap: 12px;
       position: relative;
     }
-
     body.dark-mode .chat-header {
       background: #374151;
       border-bottom: 1px solid #4b5563;
     }
-
     .chat-header img {
       width: 36px;
       height: 36px;
       border-radius: 50%;
     }
-
     .chat-header span {
       font-size: 16px;
       font-weight: 500;
     }
-
     .message-search {
       padding: 8px;
       border-radius: 6px;
@@ -164,13 +142,11 @@
       margin-left: auto;
       width: 200px;
     }
-
     body.dark-mode .message-search {
       background: #4b5563;
       border-color: #6b7280;
       color: var(--text-light);
     }
-
     .chat-messages {
       flex: 1;
       padding: 24px;
@@ -180,11 +156,9 @@
       flex-direction: column;
       gap: 12px;
     }
-
     body.dark-mode .chat-messages {
       background: #1f2937;
     }
-
     .message-container {
       max-width: 75%;
       animation: fadeIn 0.3s ease;
@@ -192,12 +166,10 @@
       flex-direction: column;
       position: relative;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .sent {
       align-self: flex-end;
       background-color: var(--chat-sent);
@@ -205,7 +177,6 @@
       border-radius: 12px 12px 2px 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
-
     .received {
       align-self: flex-start;
       background-color: var(--chat-received);
@@ -213,11 +184,9 @@
       border-radius: 12px 12px 12px 2px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
-
     .message-container:hover .message-actions {
       display: flex;
     }
-
     .message-actions {
       display: none;
       position: absolute;
@@ -225,7 +194,6 @@
       right: -8px;
       gap: 4px;
     }
-
     .action-btn {
       background: #d1d5db;
       color: white;
@@ -238,15 +206,12 @@
       line-height: 20px;
       text-align: center;
     }
-
     .delete-btn {
       background: #f87171;
     }
-
     .copy-btn {
       background: #60a5fa;
     }
-
     .timestamp {
       font-size: 10px;
       color: #6b7280;
@@ -256,16 +221,13 @@
       align-items: center;
       gap: 4px;
     }
-
     .read-receipt {
       font-size: 9px;
       color: #3b82f6;
     }
-
     body.dark-mode .timestamp {
       color: #9ca3af;
     }
-
     .typing-indicator {
       font-size: 12px;
       color: #6b7280;
@@ -274,13 +236,11 @@
       margin-top: -4px;
       animation: pulse 1.5s infinite;
     }
-
     @keyframes pulse {
       0% { opacity: 0.5; }
       50% { opacity: 1; }
       100% { opacity: 0.5; }
     }
-
     .chat-input {
       display: flex;
       padding: 16px 24px;
@@ -288,12 +248,10 @@
       background: white;
       align-items: center;
     }
-
     body.dark-mode .chat-input {
       background: #374151;
       border-top: 1px solid #4b5563;
     }
-
     .chat-input input[type="text"] {
       flex: 1;
       padding: 10px 16px;
@@ -303,13 +261,11 @@
       outline: none;
       margin-right: 8px;
     }
-
     body.dark-mode .chat-input input[type="text"] {
       background: #4b5563;
       border-color: #6b7280;
       color: var(--text-light);
     }
-
     .chat-input button {
       padding: 8px 16px;
       border: none;
@@ -320,11 +276,9 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
     .chat-input button:hover {
       background: var(--secondary);
     }
-
     .emoji-btn, .attach-btn {
       padding: 8px;
       border: none;
@@ -335,7 +289,6 @@
       font-size: 14px;
       margin-right: 8px;
     }
-
     .emoji-picker {
       display: none;
       position: absolute;
@@ -346,17 +299,14 @@
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-
     body.dark-mode .emoji-picker {
       background: #374151;
     }
-
     .emoji-picker span {
       cursor: pointer;
       padding: 4px;
       font-size: 18px;
     }
-
     .file-preview {
       margin-top: 6px;
       padding: 6px;
@@ -366,79 +316,55 @@
       align-items: center;
       gap: 6px;
     }
-
     body.dark-mode .file-preview {
       background: #4b5563;
     }
-
     .file-preview img {
       max-width: 40px;
       max-height: 40px;
       border-radius: 4px;
     }
-
     .file-preview span {
       font-size: 11px;
       color: #6b7280;
     }
-
     body.dark-mode .file-preview span {
       color: #9ca3af;
     }
-
     @media (max-width: 768px) {
       .sidebar {
         display: none;
       }
-
       .chat-area {
         width: 100%;
       }
     }
-
     .chat-messages::-webkit-scrollbar {
       width: 4px;
     }
-
     .chat-messages::-webkit-scrollbar-thumb {
       background-color: #d1d5db;
       border-radius: 4px;
     }
-
     body.dark-mode .chat-messages::-webkit-scrollbar-thumb {
       background-color: #6b7280;
     }
   </style>
 </head>
 <body>
-
 <div class="sidebar">
   <h2>Chats <i class="fas fa-moon dark-mode-toggle" onclick="toggleDarkMode()"></i></h2>
   <input type="text" class="contact-search" id="contactSearch" placeholder="Search contacts...">
-  <div class="contact" data-name="John Doe">
-    <img src="https://i.pravatar.cc/40?img=1" alt="User">
-    <span>John Doe</span>
-  </div>
-  <div class="contact" data-name="Jane Smith">
-    <img src="https://i.pravatar.cc/40?img=2" alt="User">
-    <span>Jane Smith</span>
-  </div>
-  <div class="contact" data-name="Support Bot">
-    <img src="https://i.pravatar.cc/40?img=3" alt="Bot">
-    <span>Support Bot</span>
-  </div>
+  <!-- Contacts will be dynamically added here -->
 </div>
-
 <div class="chat-area">
   <div class="chat-header">
-    <img src="https://i.pravatar.cc/40?img=3" alt="Bot">
-    <span>Support Bot</span>
+    <img src="https://i.pravatar.cc/40?img=3" alt="User">
+    <span>Select a contact</span>
     <input type="text" class="message-search" id="messageSearch" placeholder="Search messages...">
   </div>
-
   <div class="chat-messages" id="chatMessages"></div>
-  <div class="typing-indicator" id="typingIndicator" style="display: none;">Bot is typing...</div>
-
+  <div class="typing-indicator" id="typingIndicator" style="display: none;">User is typing...</div>
   <div class="chat-input">
     <input type="file" id="fileInput" style="display: none;" accept="image/*">
     <button class="attach-btn" onclick="document.getElementById('fileInput').click()"><i class="fas fa-paperclip"></i></button>
@@ -454,7 +380,6 @@
     </div>
   </div>
 </div>
-
 <script>
   const chatMessages = document.getElementById('chatMessages');
   const chatInput = document.getElementById('chatInput');
@@ -463,10 +388,76 @@
   const fileInput = document.getElementById('fileInput');
   const messageSearch = document.getElementById('messageSearch');
   const contactSearch = document.getElementById('contactSearch');
-
   let messages = [];
+  let selectedUser = null;
+
+  // Simulated backend API response for logged-in users
+  const loggedInUsers = [
+    { id: 1, name: 'John Doe', avatar: 'https://i.pravatar.cc/40?img=1' },
+    { id: 2, name: 'Jane Smith', avatar: 'https://i.pravatar.cc/40?img=2' },
+    { id: 3, name: 'Support Bot', avatar: 'https://i.pravatar.cc/40?img=3' }
+  ];
+
+  // Fetch logged-in users (replace with actual API call in production)
+  async function fetchLoggedInUsers() {
+    try {
+      // Simulate API call
+      // const response = await fetch('/api/logged-in-users');
+      // const users = await response.json();
+      const users = loggedInUsers; // Simulated response
+      renderContacts(users);
+    } catch (error) {
+      console.error('Error fetching logged-in users:', error);
+    }
+  }
+
+  // Render contacts in the sidebar
+  function renderContacts(users) {
+    const sidebar = document.querySelector('.sidebar');
+    const existingContacts = sidebar.querySelectorAll('.contact');
+    existingContacts.forEach(contact => contact.remove());
+    users.forEach(user => {
+      const contact = document.createElement('div');
+      contact.className = 'contact';
+      contact.dataset.name = user.name;
+      contact.dataset.id = user.id;
+      contact.innerHTML = `
+        <img src="${user.avatar}" alt="${user.name}">
+        <span>${user.name}</span>
+      `;
+      contact.addEventListener('click', () => selectContact(user));
+      sidebar.appendChild(contact);
+    });
+  }
+
+  // Handle contact selection
+  function selectContact(user) {
+    selectedUser = user;
+    const chatHeader = document.querySelector('.chat-header');
+    chatHeader.innerHTML = `
+      <img src="${user.avatar}" alt="${user.name}">
+      <span>${user.name}</span>
+      <input type="text" class="message-search" id="messageSearch" placeholder="Search messages...">
+    `;
+    // Rebind message search event listener
+    document.getElementById('messageSearch').addEventListener('input', () => {
+      const searchTerm = messageSearch.value.toLowerCase();
+      document.querySelectorAll('.message-container').forEach(container => {
+        const text = container.querySelector('div.sent, div.received').textContent.toLowerCase();
+        container.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+      });
+    });
+    // Clear messages and load for selected user (simulated)
+    chatMessages.innerHTML = '';
+    messages = [];
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 
   function sendMessage() {
+    if (!selectedUser) {
+      alert('Please select a contact to send a message.');
+      return;
+    }
     const text = chatInput.value.trim();
     const file = fileInput.files[0];
     if (!text && !file) return;
@@ -478,20 +469,21 @@
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       read: false,
       file: file ? URL.createObjectURL(file) : null,
-      fileName: file ? file.name : null
+      fileName: file ? file.name : null,
+      recipientId: selectedUser.id
     };
 
     addMessage(message);
     messages.push(message);
     chatInput.value = '';
     fileInput.value = '';
-    showTypingIndicator();
 
+    showTypingIndicator();
     setTimeout(() => {
       hideTypingIndicator();
       const botMessage = {
         id: Date.now(),
-        text: "I'm here to help you! 😊",
+        text: `Response from ${selectedUser.name}: I'm here to help you! 😊`,
         type: 'received',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         read: true
@@ -506,7 +498,6 @@
     const container = document.createElement('div');
     container.className = 'message-container';
     container.dataset.id = message.id;
-
     const msg = document.createElement('div');
     msg.className = message.type;
     msg.textContent = message.text;
@@ -528,7 +519,7 @@
     const timestamp = document.createElement('div');
     timestamp.className = 'timestamp';
     timestamp.textContent = message.timestamp;
-    
+
     if (message.type === 'sent') {
       const readReceipt = document.createElement('span');
       readReceipt.className = 'read-receipt';
@@ -538,7 +529,6 @@
 
     const actions = document.createElement('div');
     actions.className = 'message-actions';
-
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'action-btn delete-btn';
     deleteBtn.innerHTML = '×';
@@ -546,7 +536,6 @@
       container.remove();
       messages = messages.filter(m => m.id !== message.id);
     };
-
     const copyBtn = document.createElement('button');
     copyBtn.className = 'action-btn copy-btn';
     copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
@@ -555,10 +544,8 @@
       copyBtn.innerHTML = '<i class="fas fa-check"></i>';
       setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i>', 1000);
     };
-
     actions.appendChild(copyBtn);
     actions.appendChild(deleteBtn);
-
     container.appendChild(msg);
     container.appendChild(timestamp);
     container.appendChild(actions);
@@ -638,7 +625,9 @@
       chatInput.focus();
     }
   });
-</script>
 
+  // Initialize: Fetch logged-in users on page load
+  fetchLoggedInUsers();
+</script>
 </body>
 </html>
